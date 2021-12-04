@@ -1,0 +1,3 @@
+* Overview
+
+This is a project that demonstrates a Nuget package with native dependencies cross compiled with Docker.

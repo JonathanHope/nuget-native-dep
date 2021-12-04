@@ -1,0 +1,17 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+
+COPY build-linux-x86/libhello.so ./build-linux-x86/
+COPY build-linux-x64/libhello.so ./build-linux-x64/
+COPY build-windows-x86/libhello.dll ./build-windows-x86/
+COPY build-windows-x64/libhello.dll ./build-windows-x64/
+COPY HelloSharp ./HelloSharp
+COPY HelloSharp.Tests ./HelloSharp.Tests
+
+RUN dotnet build HelloSharp/HelloSharp.csproj -c Release
+RUN dotnet pack HelloSharp/HelloSharp.csproj -c Release -o /build
+
+RUN dotnet nuget add source /build
+
+RUN dotnet add HelloSharp.Tests/HelloSharp.Tests.csproj package HelloSharp
+RUN dotnet build HelloSharp.Tests/HelloSharp.Tests.csproj -c Release
+RUN dotnet test HelloSharp.Tests/HelloSharp.Tests.csproj -c Release
